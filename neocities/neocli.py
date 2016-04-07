@@ -44,7 +44,7 @@ def upload(source, destination):
     Source refers to a local file.
     Destination refers to the remote file name and location.
     """
-    if not '.' in destination:
+    if destination and not '.' in destination:
         click.echo("Invalid target; please specify a file extension for the target path.")
         return 1
     nc.upload((source.name, destination if destination else source.name))
