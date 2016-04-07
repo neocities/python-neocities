@@ -79,6 +79,7 @@ def list(site):
 def main():
     username = os.environ["NEOCITIES_USER"]
     password = os.environ["NEOCITIES_PASS"]
+    global nc
     nc = neocities.NeoCities(username, password)
     cli(obj={})
 
