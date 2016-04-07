@@ -12,7 +12,7 @@ setup(name='neocities',
           ],
       license='LGPLv3',
       package_dir={'neocities': 'neocities'},
-      requires=['requests'],
+      install_requires=['requests'],
       packages=find_packages('.'),
       entry_points="""\
 [console_scripts]
