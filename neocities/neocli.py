@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import neocities
-import sys
 import os
-import requests
 import click
 from tabulate import tabulate
 
@@ -11,6 +9,7 @@ CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
     token_normalize_func=lambda x: x.lower()
     )
+
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
@@ -44,16 +43,18 @@ def upload(source, destination):
     Source refers to a local file.
     Destination refers to the remote file name and location.
     """
-    if destination and not '.' in destination:
-        click.echo("Invalid target; please specify a file extension for the target path.")
+    if destination and '.' not in destination:
+        click.echo("Invalid target; specify a target path file extension.")
         return 1
     nc.upload((source.name, destination if destination else source.name))
+
 
 @cli.command()
 @click.argument('filenames', required=True, nargs=-1)
 def delete(filenames):
     """Delete one or more files from a NeoCities site."""
     nc.delete(filenames)
+
 
 @cli.command()
 @click.argument('site', required=False)
@@ -70,7 +71,6 @@ def list(site):
     else:
         print(response)
         return
-    headers = files[0].keys()
     table = tabulate(files, "keys")
 
     print(table)
@@ -85,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
