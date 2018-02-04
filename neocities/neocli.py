@@ -1,20 +1,32 @@
 #!/usr/bin/env python
 import neocities
+import requests
 import os
 import click
+from glob import glob
 from tabulate import tabulate
-
+import shutil
 
 CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
     token_normalize_func=lambda x: x.lower()
     )
 
+supExt = [
+    '.html','.htm',
+    '.jpg','.png','.gif','.svg','.ico',
+    '.md','.markdown',
+    '.js','.json','.geojson',
+    '.css',
+    '.txt','.text','.csv','.tsv',
+    '.xml',
+    '.eot','.ttf','.woff','.woff2',
+    '.mid','.midi'
+]
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
     pass
-
 
 @cli.command()
 @click.argument('site', required=False)
@@ -75,6 +87,15 @@ def list(site):
 
     print(table)
 
+
+@cli.command()
+@click.argument('dirc',required=True)
+def push(dirc):
+    """Push recursively directory to NeoCities site"""
+    files = glob(dirc+'/**',recursive=True)
+    for file in files:
+        if os.path.splitext(file)[1] in supExt:
+            nc.upload(file,os.path.split(file)[1])
 
 def main():
     username = os.environ["NEOCITIES_USER"]
