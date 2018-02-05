@@ -30,6 +30,26 @@ class NeoCities:
                                 auth=self.auth, params=args)
         return self._decode(response)
 
+    def listitems(self, site_name=''):
+        """
+        Request file listing for a neocities site (does not require authentication).
+
+        Parameters
+        ----------
+        site_name : str
+            The name of the site
+
+        Returns
+        -------
+        request : list of dicts
+            A JSON-decoded request
+
+        """
+        args = {'sitename': site_name} if site_name else None
+        response = requests.get(self._request_url('list'),
+                                auth=self.auth, params=args)
+        return self._decode(response)
+
     def delete(self, *filenames):
         """
         Delete files from a NeoCities site
@@ -60,7 +80,8 @@ class NeoCities:
         ----------
         filenames: *tuple (str, str)
             The names of the files to be uploaded in the format
-            (name_on_server, name_on_disk)
+            (name_on_disk, name_on_server)
+            Note: name_on_server must include the file extension.
 
         Returns
         -------
@@ -68,7 +89,11 @@ class NeoCities:
             A JSON-decoded request
 
         """
-        args = {i[0]: open(i[1], 'rb') for i in filenames}
+
+        # NeoCities API expects a dict in the following format:
+        # { name_on_server: <file_object> }
+        args = {pair[1]: open(pair[0], 'rb') for pair in filenames}
+
         response = requests.post(self._request_url('upload'),
                                  auth=self.auth, files=args)
         return self._decode(response)
@@ -78,7 +103,8 @@ class NeoCities:
 
     def _decode(self, response):
         if response.status_code != 200:
-            raise NeoCities.InvalidRequestError(response.status_code)
+            print(response.__dict__)
+            raise NeoCities.InvalidRequestError(response.status_code, response._content)
         else:
             return response.json()
 
@@ -86,8 +112,9 @@ class NeoCities:
         """
         Exception for signalling a request different than 200 OK
         """
-        def __init__(self, status_code):
+        def __init__(self, status_code, reason=None):
             self.status_code = status_code
+            self.reason = reason
 
         def __str__(self):
-            return "Request returned status code {}".format(self.status_code)
+            return "Request returned status code {}: {}".format(self.status_code, self.reason)
