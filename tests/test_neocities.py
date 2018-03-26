@@ -30,8 +30,8 @@ class NeoCitiesTestCase(unittest.TestCase):
         I would usually refrain from testing multiple things at once but order
         is very important in this case
         """
-        response = self.nc.upload(('neko.png', 'tests/fixtures/cat.png'),
-                                  ('gpl.html', 'tests/fixtures/gpl.html'))
+        response = self.nc.upload(('tests/fixtures/cat.png', 'neko.png'),
+                                  ('tests/fixtures/gpl.html', 'gpl.html'))
         self.assertEqual(response['result'], 'success')
         response = self.nc.delete('neko.png', 'gpl.html')
         self.assertEqual(response['result'], 'success')

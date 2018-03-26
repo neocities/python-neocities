@@ -47,7 +47,7 @@ response = nc.info()
 You can upload files with
 
 ```python
-nc.upload(('name_on_server', 'name_on_disk'), ...)
+nc.upload(('name_on_disk', 'name_on_server'), ...)
 ```
 
 Where `name_on_server` is the name you want the file to have on the NeoCities
