@@ -111,7 +111,7 @@ def push(dirc):
     files = glob(dirc + "/**", recursive=True)
     for file in files:
         if os.path.splitext(file)[1] in supExt:
-            nc.upload(file, os.path.split(file)[1])
+            nc.upload((file, os.path.split(file)[1]))
 
 
 def main():
