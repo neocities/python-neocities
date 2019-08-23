@@ -27,7 +27,15 @@ import neocities
 nc = neocities.NeoCities('username', 'password')
 ```
 
-(Passing a valid username and password is not necessary if you are only going
+Or you can initialize a NeoCities object using an API key with
+
+```python
+import neocities
+
+nc = neocities.NeoCities(api_key='NEOCITIES_API_KEY')
+```
+
+(Passing a valid username and password, or API key, is not necessary if you are only going
 to use the `info` call)
 
 After you've done that, you can query NeoCities for information about a

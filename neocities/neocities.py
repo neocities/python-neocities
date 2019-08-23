@@ -2,8 +2,11 @@ import requests
 
 
 class NeoCities:
-    def __init__(self, username=None, password=None, options={}):
+    api_key = None
+    def __init__(self, username=None, password=None, api_key=None, options={}):
         self.auth = (username, password)
+        if api_key:
+            self.api_key = api_key
         self.options = options
         self.url = options.get('url', 'https://neocities.org')
 
@@ -26,8 +29,10 @@ class NeoCities:
             args = {'sitename': site_name}
         else:
             args = None
-        response = requests.get(self._request_url('info'),
-                                auth=self.auth, params=args)
+        if self.api_key:
+            response = requests.get(self._request_url('info'), params=args, headers={'Authorization':'Bearer '+self.api_key})
+        else:
+            response = requests.get(self._request_url('info'), auth=self.auth, params=args)
         return self._decode(response)
 
     def listitems(self, site_name=''):
@@ -46,8 +51,10 @@ class NeoCities:
 
         """
         args = {'sitename': site_name} if site_name else None
-        response = requests.get(self._request_url('list'),
-                                auth=self.auth, params=args)
+        if self.api_key:
+            response = requests.get(self._request_url('list'), params=args, headers={'Authorization':'Bearer '+self.api_key})
+        else:
+            response = requests.get(self._request_url('list'), auth=self.auth, params=args)
         return self._decode(response)
 
     def delete(self, *filenames):
@@ -68,8 +75,10 @@ class NeoCities:
         args = {'filenames[]': []}
         for i in filenames:
             args['filenames[]'].append(i)
-        response = requests.post(self._request_url('delete'),
-                                 auth=self.auth, data=args)
+        if self.api_key:
+            response = requests.get(self._request_url('delete'), data=args, headers={'Authorization':'Bearer '+self.api_key})
+        else:
+            response = requests.post(self._request_url('delete'), auth=self.auth, data=args)
         return self._decode(response)
 
     def upload(self, *filenames):
@@ -93,9 +102,10 @@ class NeoCities:
         # NeoCities API expects a dict in the following format:
         # { name_on_server: <file_object> }
         args = {pair[1]: open(pair[0], 'rb') for pair in filenames}
-
-        response = requests.post(self._request_url('upload'),
-                                 auth=self.auth, files=args)
+        if self.api_key:
+            response = requests.post(self._request_url('upload'), files=args, headers={'Authorization':'Bearer '+self.api_key})
+        else:
+            response = requests.post(self._request_url('upload'), auth=self.auth, files=args)
         return self._decode(response)
 
     def _request_url(self, method):

@@ -77,10 +77,11 @@ def list(site):
 
 
 def main():
-    username = os.environ["NEOCITIES_USER"]
-    password = os.environ["NEOCITIES_PASS"]
+    username = os.environ.get("NEOCITIES_USER")
+    password = os.environ.get("NEOCITIES_PASS")
+    api_key = os.environ.get("NEOCITIES_API_KEY")
     global nc
-    nc = neocities.NeoCities(username, password)
+    nc = neocities.NeoCities(username, password, api_key)
     cli(obj={})
 
 if __name__ == "__main__":
