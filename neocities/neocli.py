@@ -3,7 +3,6 @@ import neocities
 import requests
 import os
 import click
-from glob import glob
 from tabulate import tabulate
 import shutil
 
@@ -108,10 +107,14 @@ def list(site):
 @click.argument("dirc", required=True)
 def push(dirc):
     """Push recursively directory to NeoCities site"""
-    files = glob(dirc + "/**", recursive=True)
-    for file in files:
-        if os.path.splitext(file)[1] in supExt:
-            nc.upload((file, os.path.split(file)[1]))
+    files = []
+    for root, dirs, dirfiles, in os.walk(dirc):
+        for name in dirfiles:
+            files.append((os.path.join(root, name),
+                          os.path.relpath(os.path.join(root, name), dirc)))
+    for filename, dest in files:
+        if os.path.splitext(filename)[1].lower() in supExt:
+            nc.upload((filename, dest))
 
 
 def main():
