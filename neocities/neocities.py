@@ -3,7 +3,7 @@ import requests
 
 class NeoCities:
     api_key = None
-    def __init__(self, username=None, password=None, api_key=None, options={}):
+    def __init__(self, username='', password='', api_key='', options={}):
         self.auth = (username, password)
         if api_key:
             self.api_key = api_key
