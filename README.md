@@ -2,7 +2,7 @@
 
 python-neocities is a Python wrapper of the NeoCities.org REST API.
 
-NeoCities.org is a FLOSS service which offers 20 Megabytes of gratis
+NeoCities.org is a FLOSS service which offers one Gigabyte of gratis
 and ad-free hosting inspired by GeoCities. I really liked their approach so
 I decided to contribute this little API.
 
