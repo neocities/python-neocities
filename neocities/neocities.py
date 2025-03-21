@@ -76,7 +76,7 @@ class NeoCities:
         for i in filenames:
             args['filenames[]'].append(i)
         if self.api_key:
-            response = requests.get(self._request_url('delete'), data=args, headers={'Authorization':'Bearer '+self.api_key})
+            response = requests.post(self._request_url('delete'), data=args, headers={'Authorization':'Bearer '+self.api_key})
         else:
             response = requests.post(self._request_url('delete'), auth=self.auth, data=args)
         return self._decode(response)
