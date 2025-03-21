@@ -76,7 +76,7 @@ class NeoCities:
         for i in filenames:
             args['filenames[]'].append(i)
         if self.api_key:
-            response = requests.get(self._request_url('delete'), data=args, headers={'Authorization':'Bearer '+self.api_key})
+            response = requests.post(self._request_url('delete'), data=args, headers={'Authorization':'Bearer '+self.api_key})
         else:
             response = requests.post(self._request_url('delete'), auth=self.auth, data=args)
         return self._decode(response)
@@ -92,6 +92,12 @@ class NeoCities:
             (name_on_disk, name_on_server)
             Note: name_on_server must include the file extension.
 
+        AND/OR
+
+        filenames: directory
+            If directory exists on server, will upload files to existing directory.
+            If directory does not exist on server, will create directory and upload files.
+
         Returns
         -------
         request : dict
@@ -101,7 +107,47 @@ class NeoCities:
 
         # NeoCities API expects a dict in the following format:
         # { name_on_server: <file_object> }
-        args = {pair[1]: open(pair[0], 'rb') for pair in filenames}
+        from os.path import isdir
+        
+        def __handle_dir(directory):
+            """
+            Extracts files from directory as list of tuples (file_name, file_path)
+            """
+            from os import listdir
+            from os.path import join
+
+            # print(f'dicrectory {directory} found. Parsing.')
+            tuples = list()
+
+            files = listdir(directory)
+
+            for file in files:
+                if isdir(join(directory, file)):
+                    # print(f'inner directory {file} found'. Parsing.)
+                    tuples.extend(__handle_dir(join(directory,file)))
+
+                else:
+                    tuples.append((join(directory,file), join(directory,file)))
+
+            return tuples
+
+        args = dict()
+        tuples = list()
+
+        filenames = list(filenames)
+
+        for file in filenames:
+            if type(file) == tuple:
+                tuples.append((file[0], file[1]))
+            elif isdir(file):
+                tuples = __handle_dir(file)
+
+            
+            for item in tuples:
+                print(item)
+                args[item[1]] = open(item[0], 'rb')
+
+
         if self.api_key:
             response = requests.post(self._request_url('upload'), files=args, headers={'Authorization':'Bearer '+self.api_key})
         else:
